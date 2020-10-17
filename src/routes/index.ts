@@ -1,11 +1,17 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import userRoutes from "./user";
 import companyRoutes from "./company";
-import isAuth from "../middleware/isUserAuth";
+import { refreshToken } from "../controllers/Token";
 
 const rootRouter = Router();
 
-rootRouter.use("/company", isAuth, companyRoutes);
-rootRouter.use("/user", isAuth, userRoutes);
+rootRouter.use("/company", companyRoutes);
+rootRouter.use("/user", userRoutes);
+rootRouter.post("/refresh-token", refreshToken);
+rootRouter.get("/", (_req: Request, res: Response) => {
+  res.send({
+    ok: true,
+  });
+});
 
 export default rootRouter;
