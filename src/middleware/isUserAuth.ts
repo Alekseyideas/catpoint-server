@@ -1,14 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import { getTokenData } from "../utils/getTokenData";
 
-const userApi = "/api/v1/user";
-const companyApi = "/api/v1/company";
+const api = "/api/v1";
+const userApi = api + "/user";
+const companyApi = api + "/company";
 const excludeUrls = [
   `${userApi}/sign-up`,
   `${userApi}/sign-in`,
   `${companyApi}/sign-up`,
   `${companyApi}/sign-in`,
-  `/api/refresh-token`,
+  `${api}/refresh-token`,
 ];
 
 export default function (req: Request, _res: Response, next: NextFunction) {

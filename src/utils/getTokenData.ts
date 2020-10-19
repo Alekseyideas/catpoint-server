@@ -7,6 +7,8 @@ export const getTokenData = (req: Request) => {
 
   try {
     const token = authorization.split(" ")[1];
+    console.log("getTokenData -> token", token);
+    console.log(verify(token, process.env.ACCESS_TOKEN_SECRET!));
     return verify(token, process.env.ACCESS_TOKEN_SECRET!);
   } catch (e) {
     throw new Error(e.message);
