@@ -8,7 +8,6 @@ export const refreshToken = async (
   res: Response,
   _next: NextFunction
 ) => {
-  console.log(req.body);
   const token = req.body?.refreshToken;
   if (!token) {
     return res.send({ ok: false, data: { token: "", refreshToken: "" } });
@@ -21,7 +20,6 @@ export const refreshToken = async (
     console.log(err);
     return res.send({ ok: false, data: { token: "", refreshToken: "" } });
   }
-  console.log(payload, "payload");
   // token is valid and
   // we can send back an access token
   const user = await User.findOne({ id: payload.id });
