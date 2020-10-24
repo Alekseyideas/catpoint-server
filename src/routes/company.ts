@@ -1,12 +1,10 @@
-import { Router, Request, Response } from "express";
+import { Router } from 'express';
+import { signIn, signUp, getCompanies } from '../controllers/Company';
 
 const router = Router();
 
-router.post("/create", (req: Request, res: Response) => {
-  console.log("req company", req.body);
-  res.send({
-    status: "comp ok",
-  });
-});
+router.post('/sign-up', signUp);
+router.post('/sign-in', signIn);
+router.get('/all', getCompanies);
 
 export default router;

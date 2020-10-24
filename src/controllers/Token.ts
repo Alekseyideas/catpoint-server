@@ -1,16 +1,13 @@
-import { Request, Response, NextFunction } from "express";
-import { verify } from "jsonwebtoken";
-import { User } from "../entities";
-import { createRefreshToken, createAccessToken } from "../utils/auth";
+import { Request, Response, NextFunction } from 'express';
+import { verify } from 'jsonwebtoken';
+import { User } from '../entities/User';
+import { Company } from '../entities/Company';
+import { createRefreshToken, createAccessToken } from '../utils/auth';
 
-export const refreshToken = async (
-  req: Request,
-  res: Response,
-  _next: NextFunction
-) => {
+export const refreshToken = async (req: Request, res: Response, _next: NextFunction) => {
   const token = req.body?.refreshToken;
   if (!token) {
-    return res.send({ ok: false, data: { token: "", refreshToken: "" } });
+    return res.send({ ok: false, data: { token: '', refreshToken: '' } });
   }
 
   let payload: any = null;
@@ -18,14 +15,16 @@ export const refreshToken = async (
     payload = verify(token, process.env.REFRESH_TOKEN_SECRET!);
   } catch (err) {
     console.log(err);
-    return res.send({ ok: false, data: { token: "", refreshToken: "" } });
+    return res.send({ ok: false, data: { token: '', refreshToken: '' } });
   }
   // token is valid and
   // we can send back an access token
-  const user = await User.findOne({ id: payload.id });
-
-  if (!user) {
-    return res.send({ ok: false, data: { token: "", refreshToken: "" } });
+  let data = null;
+  if (req.baseUrl.includes('company')) data = await Company.findOne({ id: payload.id });
+  else data = await User.findOne({ id: payload.id });
+  console.log(data);
+  if (!data) {
+    return res.send({ ok: false, data: { token: '', refreshToken: '' } });
   }
 
   // sendRefreshToken(res, createRefreshToken(user));
@@ -33,8 +32,8 @@ export const refreshToken = async (
   return res.send({
     ok: true,
     data: {
-      token: createAccessToken(user),
-      refreshToken: createRefreshToken(user),
+      token: createAccessToken(data),
+      refreshToken: createRefreshToken(data),
     },
   });
 };

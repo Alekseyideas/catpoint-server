@@ -1,6 +1,6 @@
 import { createConnection } from "typeorm";
 import path from "path";
-import { User } from "../entities";
+import { User, Company } from "../entities";
 import { DB_URL } from "./const";
 
 export const connectToDb = async () => {
@@ -9,7 +9,7 @@ export const connectToDb = async () => {
       type: "postgres",
       url: DB_URL,
       migrations: [path.join(__dirname, "./migrations/*")],
-      entities: [User],
+      entities: [User, Company],
     });
     console.log("✅ Database was connected");
   } catch (e) {
