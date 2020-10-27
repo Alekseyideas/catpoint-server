@@ -20,9 +20,9 @@ export const refreshToken = async (req: Request, res: Response, _next: NextFunct
   // token is valid and
   // we can send back an access token
   let data = null;
-  if (req.baseUrl.includes('company')) data = await Company.findOne({ id: payload.id });
+  if (payload.isCompany) data = await Company.findOne({ id: payload.id });
   else data = await User.findOne({ id: payload.id });
-  console.log(data);
+  // console.log('data', data);
   if (!data) {
     return res.send({ ok: false, data: { token: '', refreshToken: '' } });
   }
@@ -32,8 +32,9 @@ export const refreshToken = async (req: Request, res: Response, _next: NextFunct
   return res.send({
     ok: true,
     data: {
-      token: createAccessToken(data),
-      refreshToken: createRefreshToken(data),
+      token: createAccessToken(data, payload.isCompany),
+      refreshToken: createRefreshToken(data, payload.isCompany),
+      id: payload.id,
     },
   });
 };

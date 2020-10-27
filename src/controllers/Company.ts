@@ -3,6 +3,7 @@ import argon2 from 'argon2';
 import { createRefreshToken, createAccessToken } from '../utils/auth';
 import { Company } from '../entities';
 import { BadRequest } from '../utils/CpError';
+import { getTokenData } from '../utils/getTokenData';
 // import { getTokenData } from '../utils/getTokenData';
 
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
@@ -64,8 +65,8 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
       ok: true,
       data: {
         ...company,
-        token: createAccessToken(company),
-        refreshToken: createRefreshToken(company),
+        token: createAccessToken(company, true),
+        refreshToken: createRefreshToken(company, true),
       },
     });
   } catch (e) {
@@ -90,7 +91,6 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
     // const company = await Company.findOne({ where: { email } });
     if (!company) throw new BadRequest('Company does not exist');
     const isPassCorrect = await argon2.verify(company.password, password);
-    console.log('signIn -> isPassCorrect', isPassCorrect);
 
     if (!isPassCorrect) throw new BadRequest('password is incorrect');
     return res.send({
@@ -98,8 +98,8 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
       data: {
         ...company,
         password: null,
-        token: createAccessToken(company),
-        refreshToken: createRefreshToken(company),
+        token: createAccessToken(company, true),
+        refreshToken: createRefreshToken(company, true),
       },
     });
   } catch (e) {
@@ -115,6 +115,21 @@ export const getCompanies = async (_req: Request, res: Response, next: NextFunct
     return res.send({
       ok: true,
       data: companies,
+    });
+  } catch (e) {
+    return next(e);
+  }
+};
+
+export const getCompany = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const payload = getTokenData(req) as { data: number };
+    const company = await Company.findOne({ id: payload.data });
+
+    if (!company) throw new Error('company does not exist');
+    return res.send({
+      ok: true,
+      data: company,
     });
   } catch (e) {
     return next(e);
