@@ -1,23 +1,19 @@
-import { Request, Response, NextFunction } from "express";
-import { createRefreshToken, createAccessToken } from "../utils/auth";
-import { User } from "../entities";
-import { BadRequest } from "../utils/CpError";
-import { getTokenData } from "../utils/getTokenData";
+import { Request, Response, NextFunction } from 'express';
+import { createRefreshToken, createAccessToken } from '../utils/auth';
+import { User } from '../entities';
+import { BadRequest } from '../utils/CpError';
+import { getTokenData } from '../utils/getTokenData';
 
-export const signUp = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const signUp = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.body?.appId) {
-      throw new BadRequest("appId is required");
+      throw new BadRequest('appId is required');
     }
     if (!req.body?.email) {
-      throw new BadRequest("email is required");
+      throw new BadRequest('email is required');
     }
     if (!req.body?.firstName) {
-      throw new BadRequest("firstName is required");
+      throw new BadRequest('firstName is required');
     }
 
     const { appId, email, firstName, lastName, image } = req.body;
@@ -52,15 +48,11 @@ export const signUp = async (
   }
 };
 
-export const getUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const payload = getTokenData(req) as { data: number };
-    const user = await User.findOne({ id: payload.data });
-    if (!user) throw new Error("User does not exist");
+    const payload = getTokenData(req) as { id: number };
+    const user = await User.findOne({ id: payload.id });
+    if (!user) throw new Error('User does not exist');
     return res.send({
       ok: true,
       data: user,

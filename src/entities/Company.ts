@@ -5,8 +5,9 @@ import {
   UpdateDateColumn,
   Column,
   BaseEntity,
-  //   OneToMany,
+  OneToMany,
 } from 'typeorm';
+import { CompanyUser } from './CompanyUser';
 
 @Entity()
 export class Company extends BaseEntity {
@@ -32,6 +33,10 @@ export class Company extends BaseEntity {
     default: false,
   })
   isActive!: boolean;
+
+  @OneToMany(() => CompanyUser, (cu) => cu.company)
+  userConnection: Promise<CompanyUser[]>;
+
   @CreateDateColumn()
   createAt!: number;
   @UpdateDateColumn()

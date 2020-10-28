@@ -123,8 +123,8 @@ export const getCompanies = async (_req: Request, res: Response, next: NextFunct
 
 export const getCompany = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const payload = getTokenData(req) as { data: number };
-    const company = await Company.findOne({ id: payload.data });
+    const payload = getTokenData(req) as { id: number };
+    const company = await Company.findOne({ id: payload.id });
 
     if (!company) throw new Error('company does not exist');
     return res.send({
