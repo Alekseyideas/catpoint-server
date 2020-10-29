@@ -14,8 +14,10 @@ import { User } from './User';
 @Entity()
 export class CompanyUser extends BaseEntity {
   @PrimaryGeneratedColumn()
+  id: number;
+  @Column()
   userId: number;
-  @PrimaryGeneratedColumn()
+  @Column()
   companyId: number;
 
   @Column()
