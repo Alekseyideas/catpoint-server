@@ -35,7 +35,7 @@ export class Company extends BaseEntity {
   isActive!: boolean;
 
   @OneToMany(() => CompanyUser, (cu) => cu.company)
-  userConnection: Promise<CompanyUser[]>;
+  users: Promise<CompanyUser[]>;
 
   @CreateDateColumn()
   createAt!: number;

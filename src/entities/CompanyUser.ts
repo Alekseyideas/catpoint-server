@@ -27,7 +27,7 @@ export class CompanyUser extends BaseEntity {
   @JoinColumn({ name: 'userId' })
   user: Promise<User>;
 
-  @ManyToOne(() => Company, (company) => company.userConnection, { primary: true })
+  @ManyToOne(() => Company, (company) => company.users, { primary: true })
   @JoinColumn({ name: 'companyId' })
   company: Promise<Company>;
 
