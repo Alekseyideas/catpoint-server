@@ -30,7 +30,8 @@ const clients: any = {};
 
         for (var key in clients) {
           setTimeout(() => {
-            clients[key].send(key);
+            if (clients[key]) clients[key].send(key);
+            // clients[key].send(key);
           }, 5000);
         }
       });

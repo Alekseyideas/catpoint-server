@@ -11,6 +11,7 @@ import {
 import { Company } from './Company';
 import { User } from './User';
 
+// console.log();
 @Entity()
 export class CompanyUser extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -23,7 +24,7 @@ export class CompanyUser extends BaseEntity {
   @Column()
   points: number;
 
-  @ManyToOne(() => User, (user) => user.companyConnection, { primary: true })
+  @ManyToOne(() => User, (user) => user.companies, { primary: true })
   @JoinColumn({ name: 'userId' })
   user: Promise<User>;
 

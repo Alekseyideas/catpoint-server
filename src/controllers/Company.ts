@@ -85,7 +85,7 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
     const { email, password } = req.body;
     const company = await Company.createQueryBuilder()
       .where({ email })
-      .leftJoinAndSelect('Company.users', 'users')
+      .leftJoinAndSelect('Company.companies', 'companies')
       .addSelect('Company.password')
       .getOne();
 

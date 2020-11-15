@@ -26,7 +26,7 @@ export class User extends BaseEntity {
   @Column()
   firstName!: string;
   @OneToMany(() => CompanyUser, (cu) => cu.user)
-  companyConnection: Promise<CompanyUser[]>;
+  companies: Promise<CompanyUser[]>;
   @CreateDateColumn()
   createAt!: number;
   @UpdateDateColumn()
