@@ -1,18 +1,19 @@
-import { createConnection } from "typeorm";
-import path from "path";
-import { User, Company } from "../entities";
-import { DB_URL } from "./const";
+import { createConnection } from 'typeorm';
+import path from 'path';
+import * as Entities from '../entities';
+import { DB_URL } from './const';
 
 export const connectToDb = async () => {
   try {
+    const { User, Company, CompanyUser } = Entities;
     await createConnection({
-      type: "postgres",
+      type: 'postgres',
       url: DB_URL,
-      migrations: [path.join(__dirname, "./migrations/*")],
-      entities: [User, Company],
+      migrations: [path.join(__dirname, './migrations/*')],
+      entities: [User, Company, CompanyUser],
     });
-    console.log("✅ Database was connected");
+    console.log('✅ Database was connected');
   } catch (e) {
-    console.log("❌ connectToDb -> e", e);
+    console.log('❌ connectToDb -> e', e);
   }
 };
