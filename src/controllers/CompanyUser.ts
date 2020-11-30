@@ -5,11 +5,11 @@ import { getTokenData, TTokenData } from '../utils/getTokenData';
 export const addPoint = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const payload = getTokenData(req) as TTokenData;
-
     const compUserExist = await CompanyUser.findOne({
       where: { companyId: req.body.companyId, userId: req.body.userId },
       // where: { companyId: payload.id, userId: req.body.userId }, return after dev
     });
+
     if (compUserExist) {
       return res.send({
         ok: true,

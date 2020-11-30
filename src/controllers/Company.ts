@@ -85,10 +85,10 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
     const { email, password } = req.body;
     const company = await Company.createQueryBuilder()
       .where({ email })
-      .leftJoinAndSelect('Company.companies', 'companies')
+      // .leftJoinAndSelect('Company.companies', 'companies')
       .addSelect('Company.password')
       .getOne();
-
+    console.log(company);
     // const company = await Company.findOne({ where: { email } });
     if (!company) throw new BadRequest('Company does not exist');
     const isPassCorrect = await argon2.verify(company.password, password);
