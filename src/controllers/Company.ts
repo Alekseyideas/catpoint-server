@@ -6,6 +6,10 @@ import { BadRequest } from '../utils/CpError';
 import { getTokenData } from '../utils/getTokenData';
 // import { getTokenData } from '../utils/getTokenData';
 
+const _dbGetCompanies = () => {
+  return Company.find({ select: ['id', 'name', 'image'] });
+};
+
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.body?.email) {
@@ -85,10 +89,10 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
     const { email, password } = req.body;
     const company = await Company.createQueryBuilder()
       .where({ email })
-      .leftJoinAndSelect('Company.companies', 'companies')
+      // .leftJoinAndSelect('Company.companies', 'companies')
       .addSelect('Company.password')
       .getOne();
-
+    console.log(company);
     // const company = await Company.findOne({ where: { email } });
     if (!company) throw new BadRequest('Company does not exist');
     const isPassCorrect = await argon2.verify(company.password, password);
@@ -110,8 +114,7 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
 
 export const getCompanies = async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    const companies = await Company.find({ select: ['id', 'name', 'image'] });
-    console.log('getCompanies -> company', companies);
+    const companies = await _dbGetCompanies();
     if (!companies) throw new Error('companies does not exist');
     return res.send({
       ok: true,
@@ -138,5 +141,16 @@ export const getCompany = async (req: Request, res: Response, next: NextFunction
     });
   } catch (e) {
     return next(e);
+  }
+};
+
+export const wsGetCompanies = async () => {
+  try {
+    const companies = await _dbGetCompanies();
+    if (!companies) throw new Error('companies does not exist');
+    return companies;
+  } catch (e) {
+    console.log(e);
+    return null;
   }
 };

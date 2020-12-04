@@ -5,11 +5,11 @@ import { getTokenData, TTokenData } from '../utils/getTokenData';
 export const addPoint = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const payload = getTokenData(req) as TTokenData;
-
     const compUserExist = await CompanyUser.findOne({
       where: { companyId: req.body.companyId, userId: req.body.userId },
       // where: { companyId: payload.id, userId: req.body.userId }, return after dev
     });
+
     if (compUserExist) {
       return res.send({
         ok: true,
@@ -61,5 +61,18 @@ export const getUserCompanies = async (req: Request, res: Response, next: NextFu
     });
   } catch (e) {
     return next(e);
+  }
+};
+export const wsGetUserCompanies = async (userId: number[]) => {
+  try {
+    const companies = await CompanyUser.createQueryBuilder()
+      .select(['CompanyUser.points', 'company.name'])
+      .where({ userId: 7 })
+      .innerJoin('CompanyUser.company', 'company')
+      .getMany();
+
+    return companies;
+  } catch (e) {
+    throw new Error(e);
   }
 };

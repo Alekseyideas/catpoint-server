@@ -1,8 +1,6 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
-import WebSocket from 'ws';
 import helmet from 'helmet';
-
 import cors from 'cors';
 import 'dotenv/config';
 import bodyParser from 'body-parser';
@@ -12,36 +10,16 @@ import { connectToDb } from './utils/connection';
 import routes from './routes';
 import { CpError } from './utils/CpError';
 import isAuth from './middleware/isUserAuth';
-const clients: any = {};
+import { webSoketConnection } from './utils/sokets';
+// const clients: any = {};
 
 (async () => {
   console.log('⏫ ' + process.env.npm_package_version);
   const app: Application = express();
-  const wss = new WebSocket.Server({ port: 8011 });
+  // const wss = new WebSocket.Server({ port: 8011 });
 
   try {
-    wss.on('connection', function (ws) {
-      var id = Math.random();
-      clients[id] = ws;
-      console.log('новое соединение ' + id);
-
-      ws.on('message', function (message) {
-        console.log('получено сообщение ' + message);
-
-        for (var key in clients) {
-          setTimeout(() => {
-            if (clients[key]) clients[key].send(key);
-            // clients[key].send(key);
-          }, 5000);
-        }
-      });
-
-      ws.on('close', function () {
-        console.log('соединение закрыто ' + id);
-        delete clients[id];
-      });
-    });
-
+    webSoketConnection();
     app.use(
       cors({
         origin: '*',
@@ -69,6 +47,7 @@ const clients: any = {};
       if (error instanceof CpError) {
         return res.status(error.getCode()).json(errorObj);
       }
+
       console.log(errorObj);
       return res.status(500).send(errorObj);
     });
