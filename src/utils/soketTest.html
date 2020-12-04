@@ -2,6 +2,9 @@
 <meta charset="utf-8" />
 <title>WebSocket Test</title>
 <script language="javascript" type="text/javascript">
+  const token =
+    'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaXNDb21wYW55IjpmYWxzZSwiaWF0IjoxNjA3MDE0MzA4LCJleHAiOjE2MDcxMDA3MDh9.SAbQnFLL6P8OamEgSRtp0VKWOtFwimP3frjb2NSIox8';
+  const userId = 7;
   var wsUri = 'ws://localhost:8011';
   var output;
 
@@ -11,7 +14,7 @@
   }
 
   function testWebSocket() {
-    websocket = new WebSocket(wsUri);
+    websocket = new WebSocket(wsUri, 'protocol');
     websocket.onopen = function (evt) {
       onOpen(evt);
     };
@@ -30,8 +33,12 @@
     writeToScreen('CONNECTED');
     doSend(
       JSON.stringify({
-        type: 'getKey',
-        data: null,
+        type: 'getUserCompanies',
+        data: {
+          token,
+          userId,
+          ids: 7,
+        },
       })
     );
   }

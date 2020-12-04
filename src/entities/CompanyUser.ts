@@ -18,6 +18,7 @@ export class CompanyUser extends BaseEntity {
   id: number;
   @Column()
   userId: number;
+
   @Column()
   companyId: number;
 

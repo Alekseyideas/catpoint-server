@@ -1,13 +1,17 @@
 import WebSocket from 'ws';
+import { wsGetUserCompanies } from '../controllers/CompanyUser';
 import { BadRequest } from './CpError';
+import { verifyToken } from './getTokenData';
 
-export const wss = new WebSocket.Server({ port: 8011 });
+export const wss = new WebSocket.Server({
+  port: 8011,
+});
 
 const clients: {
   [key: string]: WebSocket;
 } = {};
 
-const TSocketTypes = ['getKey', 'getCompanies'] as const;
+const TSocketTypes = ['error', 'getKey', 'getUserCompanies', 'addPoint'] as const;
 
 export const webSoketConnection = () =>
   wss.on('connection', (ws, req) => {
@@ -19,43 +23,54 @@ export const webSoketConnection = () =>
     }
     console.log('новое соединение ' + id);
 
-    ws.on('message', function (resp) {
+    ws.on('message', async (resp) => {
       console.log('🚀 ~ file: sokets.ts ~ line 20 ~ resp', resp);
       try {
         console.log(count, 'count client');
 
         const parsedResp: {
           type: typeof TSocketTypes[number];
-          data: {} | null;
+          data: {
+            token: string;
+            ids?: number[];
+          };
         } = JSON.parse(`${resp}`);
+
         if (!parsedResp) throw new BadRequest('bad data format');
         if (!clients[id]) throw new BadRequest('client does not exist');
+        if (!parsedResp.data) throw new BadRequest('not authenticated');
+        if (!parsedResp.data.token) throw new BadRequest('not authenticated');
+
+        // verifyToken(parsedResp.data.token);
 
         switch (parsedResp.type) {
-          case TSocketTypes[1]:
+          case 'getUserCompanies':
+            const companies = await wsGetUserCompanies(parsedResp.data?.ids || []);
             return sendObj({
-              type: TSocketTypes[1],
+              type: 'getUserCompanies',
               data: {
-                companies: [1, 2, 3, 4, 5],
+                companies,
               },
             });
           default:
             return sendObj({
-              type: TSocketTypes[0],
+              type: 'getKey',
               data: {
                 clientId: id,
               },
             });
         }
-
-        function sendObj(obj: { type: typeof TSocketTypes[number]; data: {} | null }) {
-          return clients[id].send(JSON.stringify(obj));
-        }
-        // for (const client of wss.clients) {
-        //   client.send(JSON.stringify({ clientIp: id }));
-        // }
       } catch (e) {
-        console.log(e);
+        sendObj({
+          type: 'error',
+          data: {
+            message: e.message,
+          },
+        });
+        ws.close();
+      }
+      function sendObj(obj: { type: typeof TSocketTypes[number]; data: {} | null }) {
+        return clients[id].send(JSON.stringify(obj));
       }
       // console.log(JSON.parse(`${data}`));
 

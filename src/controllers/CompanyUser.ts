@@ -63,3 +63,16 @@ export const getUserCompanies = async (req: Request, res: Response, next: NextFu
     return next(e);
   }
 };
+export const wsGetUserCompanies = async (userId: number[]) => {
+  try {
+    const companies = await CompanyUser.createQueryBuilder()
+      .select(['CompanyUser.points', 'company.name'])
+      .where({ userId: 7 })
+      .innerJoin('CompanyUser.company', 'company')
+      .getMany();
+
+    return companies;
+  } catch (e) {
+    throw new Error(e);
+  }
+};

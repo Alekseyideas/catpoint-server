@@ -20,7 +20,6 @@ import { webSoketConnection } from './utils/sokets';
 
   try {
     webSoketConnection();
-
     app.use(
       cors({
         origin: '*',
@@ -48,6 +47,7 @@ import { webSoketConnection } from './utils/sokets';
       if (error instanceof CpError) {
         return res.status(error.getCode()).json(errorObj);
       }
+
       console.log(errorObj);
       return res.status(500).send(errorObj);
     });
