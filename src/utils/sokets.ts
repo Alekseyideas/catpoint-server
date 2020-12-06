@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 import { wsAddPoint, wsGetUserCompanies } from '../controllers/CompanyUser';
 import { BadRequest } from './CpError';
-// import { verifyToken } from './getTokenData';
+import { verifyToken } from './getTokenData';
 
 export const wss = new WebSocket.Server({
   port: 8011,
@@ -36,12 +36,12 @@ export const webSoketConnection = () =>
         if (!parsedResp.data) throw new BadRequest('not authenticated');
         if (!parsedResp.data.token) throw new BadRequest('not authenticated');
 
+        type TPayloadToken = { id: number; isCompany: boolean };
+        const payloadToken: TPayloadToken = verifyToken(parsedResp.data.token) as TPayloadToken;
+
         switch (parsedResp.type) {
           case 'addPoint':
-            const points = await wsAddPoint(
-              parsedResp.data?.companyId || 0,
-              parsedResp.data?.userId || 0
-            );
+            const points = await wsAddPoint(payloadToken.id || 0, parsedResp.data?.userId || 0);
             return sendObj({
               type: 'addPoint',
               data: points,

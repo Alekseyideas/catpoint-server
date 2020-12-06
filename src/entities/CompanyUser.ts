@@ -17,6 +17,9 @@ export class CompanyUser extends Model {
   @Column()
   points: number;
 
+  @Column({ default: 0 })
+  finishedCount: number;
+
   @ManyToOne(() => User, (user) => user.companies, { primary: true })
   @JoinColumn({ name: 'userId' })
   user: Promise<User>;

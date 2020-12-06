@@ -4,6 +4,7 @@ import {
   OneToMany,
   //   OneToMany,
 } from 'typeorm';
+import { UserVisitHistory } from '.';
 import { CompanyUser } from './CompanyUser';
 import Model from './Model';
 
@@ -19,6 +20,8 @@ export class User extends Model {
   lastName!: string;
   @Column()
   firstName!: string;
-  @OneToMany(() => CompanyUser, (cu) => cu.user)
+  @OneToMany(() => CompanyUser, (cu) => cu.company)
   companies: Promise<CompanyUser[]>;
+  @OneToMany(() => UserVisitHistory, (cu) => cu.user)
+  history: Promise<UserVisitHistory[]>;
 }

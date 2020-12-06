@@ -117,7 +117,6 @@ export const getCompany = async (req: Request, res: Response, next: NextFunction
       .leftJoinAndSelect('Company.users', 'users')
       .where({ id: payload.id })
       .getOne();
-    // const company = await Company.findOne({ id: payload.id });
 
     if (!company) throw new Error('company does not exist');
     return res.send({

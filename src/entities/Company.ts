@@ -2,6 +2,7 @@ import { Entity, Column, OneToMany } from 'typeorm';
 import { Length, IsEmail } from 'class-validator';
 import { CompanyUser } from './CompanyUser';
 import Model from './Model';
+import { UserVisitHistory } from './UserVisitHistory';
 
 @Entity('companies')
 export class Company extends Model {
@@ -37,8 +38,11 @@ export class Company extends Model {
   })
   isActive!: boolean;
 
-  @OneToMany(() => CompanyUser, (cu) => cu.company, { cascade: true })
+  @OneToMany(() => CompanyUser, (cu) => cu.user, { cascade: true })
   users: Promise<CompanyUser[]>;
+
+  @OneToMany(() => UserVisitHistory, (cu) => cu.company)
+  history: Promise<UserVisitHistory[]>;
 
   Json() {
     return {

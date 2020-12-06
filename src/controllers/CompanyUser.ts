@@ -1,11 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
-import { Company, CompanyUser, User } from '../entities';
+import { Company, CompanyUser, User, UserVisitHistory } from '../entities';
 
 export const wsAddPoint = async (companyId: number, userId: number, points: number = 1) => {
   try {
     const company = await Company.findOneOrFail({ id: companyId });
     await User.findOneOrFail({ id: userId });
     const existCompaniesUsers = await CompanyUser.findOne({ where: { companyId, userId } });
+
+    await UserVisitHistory.create({
+      companyId,
+      userId,
+      points,
+    }).save();
 
     const companyObj = {
       __company__: {
@@ -15,13 +21,14 @@ export const wsAddPoint = async (companyId: number, userId: number, points: numb
     };
 
     if (existCompaniesUsers) {
-      const { id, points: exPoints, visits } = existCompaniesUsers;
-
-      const resetOrUpdatePoints = company.totalPoints > exPoints + 1 ? exPoints + 1 : 0;
-
+      const { id, points: exPoints, visits, finishedCount } = existCompaniesUsers;
+      const isComplite = exPoints + 1 === company.totalPoints;
+      const resetOrUpdatePoints = isComplite ? 0 : exPoints + 1;
+      const updatedFinishedCount = isComplite ? finishedCount + 1 : finishedCount;
       const updatedObj = {
         points: resetOrUpdatePoints,
         visits: visits + 1,
+        finishedCount: updatedFinishedCount,
       };
       await CompanyUser.update(
         {
@@ -29,7 +36,7 @@ export const wsAddPoint = async (companyId: number, userId: number, points: numb
         },
         updatedObj
       );
-      const isComplite = exPoints + 1 === company.totalPoints;
+
       return {
         isComplite,
         ...existCompaniesUsers,
