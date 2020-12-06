@@ -3,8 +3,11 @@
 <title>WebSocket Test</title>
 <script language="javascript" type="text/javascript">
   const token =
-    'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaXNDb21wYW55IjpmYWxzZSwiaWF0IjoxNjA3MDE0MzA4LCJleHAiOjE2MDcxMDA3MDh9.SAbQnFLL6P8OamEgSRtp0VKWOtFwimP3frjb2NSIox8';
-  const userId = 7;
+    'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjYsImlzQ29tcGFueSI6dHJ1ZSwiaWF0IjoxNjA3MjQ2MzAxLCJleHAiOjE2MDczMzI3MDF9.A7t5vslicuEPpSRRz99sWi0hAwiR8Xbx46fs59lfX8I';
+  const userToken =
+    'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaXNDb21wYW55IjpmYWxzZSwiaWF0IjoxNjA3MTAxMDYwLCJleHAiOjE2MDcxODc0NjB9.4Xkhz_S5xDtF-B2HbnnsvxwSvG86fNCVljzZBgOU2C4';
+  const userId = 1;
+  const companyId = 1;
   var wsUri = 'ws://localhost:8011';
   var output;
 
@@ -37,7 +40,7 @@
         data: {
           token,
           userId,
-          ids: 7,
+          ids: companyId,
         },
       })
     );
@@ -73,4 +76,22 @@
 
 <h2>WebSocket Test</h2>
 
+<button id="addPoint">Add point</button>
+
 <div id="output"></div>
+
+<script>
+  const btn = document.getElementById('addPoint');
+  btn.addEventListener('click', () =>
+    doSend(
+      JSON.stringify({
+        type: 'addPoint',
+        data: {
+          token,
+          userId,
+          companyId,
+        },
+      })
+    )
+  );
+</script>

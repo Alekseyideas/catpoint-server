@@ -1,41 +1,57 @@
 import { Request, Response, NextFunction } from 'express';
-import { Company, CompanyUser } from '../entities';
-import { getTokenData, TTokenData } from '../utils/getTokenData';
+import { Company, CompanyUser, User } from '../entities';
 
-export const addPoint = async (req: Request, res: Response, next: NextFunction) => {
+export const wsAddPoint = async (companyId: number, userId: number, points: number = 1) => {
   try {
-    const payload = getTokenData(req) as TTokenData;
-    const compUserExist = await CompanyUser.findOne({
-      where: { companyId: req.body.companyId, userId: req.body.userId },
-      // where: { companyId: payload.id, userId: req.body.userId }, return after dev
-    });
+    const company = await Company.findOneOrFail({ id: companyId });
+    await User.findOneOrFail({ id: userId });
+    const existCompaniesUsers = await CompanyUser.findOne({ where: { companyId, userId } });
 
-    if (compUserExist) {
-      return res.send({
-        ok: true,
-        data: {
-          exist: true,
+    const companyObj = {
+      __company__: {
+        name: company.name || '',
+        totalPoints: company.totalPoints || 0,
+      },
+    };
+
+    if (existCompaniesUsers) {
+      const { id, points: exPoints, visits } = existCompaniesUsers;
+
+      const resetOrUpdatePoints = company.totalPoints > exPoints + 1 ? exPoints + 1 : 0;
+
+      const updatedObj = {
+        points: resetOrUpdatePoints,
+        visits: visits + 1,
+      };
+      await CompanyUser.update(
+        {
+          id,
         },
-      });
+        updatedObj
+      );
+      const isComplite = exPoints + 1 === company.totalPoints;
+      return {
+        isComplite,
+        ...existCompaniesUsers,
+        ...updatedObj,
+        ...companyObj,
+      };
     }
 
-    const compUser = await CompanyUser.create({
-      companyId: req.body.companyId,
-      // companyId: payload.id, return after dev
-      userId: req.body.userId,
-      points: req.body.points,
+    const companiesUsers = await CompanyUser.create({
+      companyId,
+      userId,
+      points,
+      visits: 1,
     }).save();
 
-    console.log('addPoint -> compUser', compUser);
-    console.log('addPoint -> payload', payload);
-    console.log('addPoint -> req', req.body);
-
-    return res.send({
-      ok: true,
-      data: compUser,
-    });
+    return {
+      isComplite: false,
+      ...companiesUsers,
+      ...companyObj,
+    };
   } catch (e) {
-    return next(e);
+    throw new Error(e);
   }
 };
 
@@ -48,7 +64,6 @@ export const getUserCompanies = async (req: Request, res: Response, next: NextFu
       objToFindArr.push({ id: ids[i] });
     }
 
-    // const companies = await Company.find({ where: objToFindArr, select: ['name', 'id', 'image'] });
     const companies = await Company.createQueryBuilder()
       .where(objToFindArr)
       .select(['Company.name', 'Company.id', 'Company.image'])
@@ -63,11 +78,12 @@ export const getUserCompanies = async (req: Request, res: Response, next: NextFu
     return next(e);
   }
 };
+
 export const wsGetUserCompanies = async (userId: number[]) => {
   try {
     const companies = await CompanyUser.createQueryBuilder()
-      .select(['CompanyUser.points', 'company.name'])
-      .where({ userId: 7 })
+      .addSelect(['company.name', 'company.totalPoints'])
+      .where({ userId })
       .innerJoin('CompanyUser.company', 'company')
       .getMany();
 

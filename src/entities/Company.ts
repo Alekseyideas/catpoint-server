@@ -1,44 +1,49 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  Column,
-  BaseEntity,
-  OneToMany,
-} from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
+import { Length, IsEmail } from 'class-validator';
 import { CompanyUser } from './CompanyUser';
+import Model from './Model';
 
-@Entity()
-export class Company extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id!: number;
+@Entity('companies')
+export class Company extends Model {
   @Column('varchar', { unique: true, length: 255 })
+  @IsEmail()
   email!: string;
-  @Column('varchar', { unique: true, length: 255 })
+  @Column('varchar', { length: 255 })
+  @Length(2)
   firstName!: string;
-  @Column('varchar', { unique: true, length: 255 })
+  @Column('varchar', { length: 255 })
+  @Length(2)
   position!: string;
   @Column('varchar', { length: 255 })
+  @Length(5)
   address!: string;
   @Column({ nullable: true })
   image!: string;
   @Column('varchar', { length: 255 })
+  @Length(2)
   name!: string;
   @Column('varchar', { length: 15 })
+  @Length(10, 15)
   phone!: string;
   @Column({ select: false })
+  @Length(5)
   password!: string;
+
+  @Column({ default: 5 })
+  totalPoints: number;
+
   @Column('bool', {
     default: false,
   })
   isActive!: boolean;
 
-  @OneToMany(() => CompanyUser, (cu) => cu.company)
+  @OneToMany(() => CompanyUser, (cu) => cu.company, { cascade: true })
   users: Promise<CompanyUser[]>;
 
-  @CreateDateColumn()
-  createAt!: number;
-  @UpdateDateColumn()
-  updateAt!: number;
+  Json() {
+    return {
+      ...this,
+      password: undefined,
+    };
+  }
 }
