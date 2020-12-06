@@ -1,29 +1,24 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  Column,
-  BaseEntity,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Company } from './Company';
+import Model from './Model';
 import { User } from './User';
 
-// console.log();
-@Entity()
-export class CompanyUser extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+@Entity('companies_users')
+export class CompanyUser extends Model {
   @Column()
   userId: number;
 
   @Column()
   companyId: number;
 
+  @Column({ default: 0 })
+  visits: number;
+
   @Column()
   points: number;
+
+  @Column({ default: 0 })
+  finishedCount: number;
 
   @ManyToOne(() => User, (user) => user.companies, { primary: true })
   @JoinColumn({ name: 'userId' })
@@ -32,9 +27,4 @@ export class CompanyUser extends BaseEntity {
   @ManyToOne(() => Company, (company) => company.users, { primary: true })
   @JoinColumn({ name: 'companyId' })
   company: Promise<Company>;
-
-  @CreateDateColumn()
-  createAt: number;
-  @UpdateDateColumn()
-  updateAt: number;
 }

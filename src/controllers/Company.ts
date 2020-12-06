@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import argon2 from 'argon2';
+import { validate } from 'class-validator';
 import { createRefreshToken, createAccessToken } from '../utils/auth';
 import { Company } from '../entities';
 import { BadRequest } from '../utils/CpError';
@@ -10,30 +11,8 @@ const _dbGetCompanies = () => {
   return Company.find({ select: ['id', 'name', 'image'] });
 };
 
-export const signUp = async (req: Request, res: Response, next: NextFunction) => {
+export const signUp = async (req: Request, res: Response) => {
   try {
-    if (!req.body?.email) {
-      throw new BadRequest('email is required');
-    }
-    if (!req.body?.firstName) {
-      throw new BadRequest('firstName is required');
-    }
-    if (!req.body?.position) {
-      throw new BadRequest('position is required');
-    }
-    if (!req.body?.address) {
-      throw new BadRequest('position is required');
-    }
-    if (!req.body?.name) {
-      throw new BadRequest('name is required');
-    }
-    if (!req.body?.phone) {
-      throw new BadRequest('name is required');
-    }
-    if (!req.body?.password) {
-      throw new BadRequest('password is required');
-    }
-
     const {
       email,
       name,
@@ -54,8 +33,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
     const existCompany = await Company.findOne({ where: { email } });
     if (existCompany) throw new BadRequest('Company already exist');
     const hash = await argon2.hash(password);
-
-    const company = await Company.create({
+    const company = Company.create({
       email,
       name,
       phone,
@@ -63,8 +41,12 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
       position,
       address,
       firstName,
-    }).save();
-
+    });
+    const errors = await validate(company);
+    console.log(errors, 'errors');
+    if (errors.length) throw errors;
+    // await company.remove();
+    await company.save();
     return res.send({
       ok: true,
       data: {
@@ -74,7 +56,10 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
       },
     });
   } catch (e) {
-    return next(e);
+    return res.status(500).send({
+      ok: false,
+      errors: e,
+    });
   }
 };
 
@@ -102,7 +87,7 @@ export const signIn = async (req: Request, res: Response, next: NextFunction) =>
       ok: true,
       data: {
         ...company,
-        password: null,
+        // password: null,
         token: createAccessToken(company, true),
         refreshToken: createRefreshToken(company, true),
       },
@@ -132,7 +117,6 @@ export const getCompany = async (req: Request, res: Response, next: NextFunction
       .leftJoinAndSelect('Company.users', 'users')
       .where({ id: payload.id })
       .getOne();
-    // const company = await Company.findOne({ id: payload.id });
 
     if (!company) throw new Error('company does not exist');
     return res.send({

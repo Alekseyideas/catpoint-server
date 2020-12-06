@@ -1,22 +1,17 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   Column,
-  BaseEntity,
   OneToMany,
   //   OneToMany,
 } from 'typeorm';
+import { UserVisitHistory } from '.';
 import { CompanyUser } from './CompanyUser';
+import Model from './Model';
 
-@Entity()
-export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id!: number;
+@Entity('users')
+export class User extends Model {
   @Column({ unique: true })
   appId!: string;
-
   @Column({ unique: true })
   email!: string;
   @Column({ nullable: true })
@@ -25,10 +20,8 @@ export class User extends BaseEntity {
   lastName!: string;
   @Column()
   firstName!: string;
-  @OneToMany(() => CompanyUser, (cu) => cu.user)
+  @OneToMany(() => CompanyUser, (cu) => cu.company)
   companies: Promise<CompanyUser[]>;
-  @CreateDateColumn()
-  createAt!: number;
-  @UpdateDateColumn()
-  updateAt!: number;
+  @OneToMany(() => UserVisitHistory, (cu) => cu.user)
+  history: Promise<UserVisitHistory[]>;
 }
