@@ -4,7 +4,7 @@ import { Company } from '../entities/Company';
 
 export const createAccessToken = (data: User | Company, isCompany?: boolean) => {
   return sign({ id: data.id, isCompany: !!isCompany }, process.env.ACCESS_TOKEN_SECRET!, {
-    expiresIn: '1d',
+    expiresIn: '7d',
   });
 };
 

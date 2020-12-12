@@ -3,9 +3,10 @@
 <title>WebSocket Test</title>
 <script language="javascript" type="text/javascript">
   const token =
-    'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjYsImlzQ29tcGFueSI6dHJ1ZSwiaWF0IjoxNjA3MjQ2MzAxLCJleHAiOjE2MDczMzI3MDF9.A7t5vslicuEPpSRRz99sWi0hAwiR8Xbx46fs59lfX8I';
+    'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaXNDb21wYW55Ijp0cnVlLCJpYXQiOjE2MDc1MzE5MTQsImV4cCI6MTYwODEzNjcxNH0.L6SjVykXiWt-qvEMa9jBXJdBkJKvw5NVzgl-Px7uui4';
   const userToken =
-    'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaXNDb21wYW55IjpmYWxzZSwiaWF0IjoxNjA3MTAxMDYwLCJleHAiOjE2MDcxODc0NjB9.4Xkhz_S5xDtF-B2HbnnsvxwSvG86fNCVljzZBgOU2C4';
+    'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaXNDb21wYW55IjpmYWxzZSwiaWF0IjoxNjA3NTM1OTU0LCJleHAiOjE2MDgxNDA3NTR9.B6rgLtCwwa9YTZ-FN3nf0w94fYEUe1LyfqgZ9C96D6M';
+  const clientId = 'xKKrdVpEIqD+b28hQBcwow==';
   const userId = 1;
   const companyId = 1;
   var wsUri = 'ws://localhost:8011';
@@ -15,7 +16,6 @@
     output = document.getElementById('output');
     testWebSocket();
   }
-
   function testWebSocket() {
     websocket = new WebSocket(wsUri, 'protocol');
     websocket.onopen = function (evt) {
@@ -36,11 +36,17 @@
     writeToScreen('CONNECTED');
     doSend(
       JSON.stringify({
+        type: 'getKey',
+        data: {
+          token,
+        },
+      })
+    );
+    doSend(
+      JSON.stringify({
         type: 'getUserCompanies',
         data: {
           token,
-          userId,
-          ids: companyId,
         },
       })
     );
@@ -90,6 +96,7 @@
           token,
           userId,
           companyId,
+          clientId,
         },
       })
     )

@@ -86,12 +86,13 @@ export const getUserCompanies = async (req: Request, res: Response, next: NextFu
   }
 };
 
-export const wsGetUserCompanies = async (userId: number[]) => {
+export const wsGetUserCompanies = async (userId: number) => {
   try {
     const companies = await CompanyUser.createQueryBuilder()
       .addSelect(['company.name', 'company.totalPoints'])
       .where({ userId })
       .innerJoin('CompanyUser.company', 'company')
+      .orderBy('company.updateAt', 'ASC')
       .getMany();
 
     return companies;
