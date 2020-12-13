@@ -1,12 +1,12 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
-// import morgan from 'morgan';
+import morgan from 'morgan';
 import helmet from 'helmet';
-// import cors from 'cors';
+import cors from 'cors';
 import 'dotenv/config';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { PORT } from './utils/const';
-// import { connectToDb } from './utils/connection';
+import { connectToDb } from './utils/connection';
 import routes from './routes';
 import { CpError } from './utils/CpError';
 import isAuth from './middleware/isUserAuth';
@@ -20,17 +20,17 @@ import { webSoketConnection } from './utils/sokets';
 
   try {
     webSoketConnection();
-    // app.use(
-    //   cors({
-    //     origin: '*',
-    //     credentials: true,
-    //   })
-    // );
+    app.use(
+      cors({
+        origin: '*',
+        credentials: true,
+      })
+    );
     app.use(helmet());
-    // await connectToDb();
+    await connectToDb();
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json({ type: 'application/json' }));
-    // app.use(morgan('combined'));
+    app.use(morgan('combined'));
     app.use(cookieParser());
     await app.use('/api/v1', isAuth, routes);
 
