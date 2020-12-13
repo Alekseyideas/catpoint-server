@@ -38,7 +38,6 @@ import { webSoketConnection } from './utils/sokets';
       statusCode: number;
       data: Object;
     }
-
     app.use((error: IError, _req: Request, res: Response, _next: NextFunction) => {
       const errorObj = {
         ok: false,
@@ -50,6 +49,10 @@ import { webSoketConnection } from './utils/sokets';
 
       console.log(errorObj);
       return res.status(500).send(errorObj);
+    });
+
+    app.get('/', (_req, res) => {
+      res.send(`<h1>🚀 Server ready at http://127.0.0.1:${PORT}</h1>`);
     });
 
     app.listen(PORT, () => {

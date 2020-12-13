@@ -27,6 +27,7 @@ export const webSoketConnection = () =>
             token: string;
             ids?: number[];
             userId?: number;
+            clientId?: string;
             companyId?: number;
           };
         } = JSON.parse(`${resp}`);
@@ -38,21 +39,24 @@ export const webSoketConnection = () =>
 
         type TPayloadToken = { id: number; isCompany: boolean };
         const payloadToken: TPayloadToken = verifyToken(parsedResp.data.token) as TPayloadToken;
-
+        console.log(parsedResp.type);
         switch (parsedResp.type) {
           case 'addPoint':
+            if (!clients[parsedResp.data?.clientId || ''])
+              throw new BadRequest('client does not exist');
             const points = await wsAddPoint(payloadToken.id || 0, parsedResp.data?.userId || 0);
-            return sendObj({
-              type: 'addPoint',
-              data: points,
-            });
+            return sendObj(
+              {
+                type: 'addPoint',
+                data: points,
+              },
+              parsedResp.data?.clientId || ''
+            );
           case 'getUserCompanies':
-            const userCompanies = await wsGetUserCompanies(parsedResp.data?.ids || []);
+            const userCompanies = await wsGetUserCompanies(payloadToken.id);
             return sendObj({
               type: 'getUserCompanies',
-              data: {
-                userCompanies,
-              },
+              data: userCompanies,
             });
           default:
             return sendObj({
@@ -72,8 +76,11 @@ export const webSoketConnection = () =>
         });
         ws.close();
       }
-      function sendObj(obj: { type: typeof TSocketTypes[number]; data: {} | null }) {
-        return clients[id].send(JSON.stringify(obj));
+      function sendObj(
+        obj: { type: typeof TSocketTypes[number]; data: {} | null },
+        appId?: string
+      ) {
+        return clients[appId || id].send(JSON.stringify(obj));
       }
     });
 
