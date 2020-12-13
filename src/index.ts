@@ -6,7 +6,7 @@ import 'dotenv/config';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { PORT } from './utils/const';
-import { connectToDb } from './utils/connection';
+// import { connectToDb } from './utils/connection';
 import routes from './routes';
 import { CpError } from './utils/CpError';
 import isAuth from './middleware/isUserAuth';
@@ -27,7 +27,7 @@ import { webSoketConnection } from './utils/sokets';
     //   })
     // );
     app.use(helmet());
-    await connectToDb();
+    // await connectToDb();
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json({ type: 'application/json' }));
     // app.use(morgan('combined'));
