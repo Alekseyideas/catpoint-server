@@ -20,17 +20,17 @@ import { webSoketConnection } from './utils/sokets';
 
   try {
     webSoketConnection();
-    app.use(
-      cors({
-        origin: '*',
-        credentials: true,
-      })
-    );
+    // app.use(
+    //   cors({
+    //     origin: '*',
+    //     credentials: true,
+    //   })
+    // );
     app.use(helmet());
     await connectToDb();
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json({ type: 'application/json' }));
-    app.use(morgan('combined'));
+    // app.use(morgan('combined'));
     app.use(cookieParser());
     await app.use('/api/v1', isAuth, routes);
 
