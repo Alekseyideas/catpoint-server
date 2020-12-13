@@ -1,7 +1,7 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
-import morgan from 'morgan';
+// import morgan from 'morgan';
 import helmet from 'helmet';
-import cors from 'cors';
+// import cors from 'cors';
 import 'dotenv/config';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
