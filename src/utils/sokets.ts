@@ -5,7 +5,7 @@ import { BadRequest } from './CpError';
 import { verifyToken } from './getTokenData';
 
 export const wss = new WebSocket.Server({
-  port: 8080,
+  port: 8082,
 });
 
 console.log(wss.options, 'wss');
@@ -13,6 +13,8 @@ console.log(wss.options, 'wss');
 const clients: {
   [key: string]: WebSocket;
 } = {};
+
+console.log(clients, 'clients');
 
 const TSocketTypes = ['error', 'getKey', 'getUserCompanies', 'addPoint'] as const;
 
