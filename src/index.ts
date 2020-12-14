@@ -1,4 +1,5 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
+import http from 'http';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -16,10 +17,11 @@ import { webSoketConnection } from './utils/sokets';
 (async () => {
   console.log('⏫ ' + process.env.npm_package_version);
   const app: Application = express();
+  const server = http.createServer(app);
   // const wss = new WebSocket.Server({ port: 8011 });
 
   try {
-    webSoketConnection();
+    webSoketConnection(server);
     app.use(
       cors({
         origin: '*',
@@ -55,7 +57,7 @@ import { webSoketConnection } from './utils/sokets';
       res.send(`<h1>🚀 Server ready at ${HOST}:${PORT}</h1>`);
     });
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`🚀 Server ready at ${HOST}:${PORT}`);
     });
   } catch (e) {

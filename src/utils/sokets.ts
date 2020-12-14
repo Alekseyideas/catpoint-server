@@ -1,14 +1,9 @@
 import WebSocket from 'ws';
 import { wsAddPoint, wsGetUserCompanies } from '../controllers/CompanyUser';
 // import { PORT } from './const';
+import http from 'http';
 import { BadRequest } from './CpError';
 import { verifyToken } from './getTokenData';
-
-export const wss = new WebSocket.Server({
-  port: 8082,
-});
-
-console.log(wss.options, 'wss');
 
 const clients: {
   [key: string]: WebSocket;
@@ -18,8 +13,16 @@ console.log(clients, 'clients');
 
 const TSocketTypes = ['error', 'getKey', 'getUserCompanies', 'addPoint'] as const;
 
-export const webSoketConnection = () =>
-  wss.on('connection', (ws, req) => {
+export const webSoketConnection = (server: http.Server) => {
+  const wss = new WebSocket.Server({
+    // port: 8082,
+    server,
+    path: '/ws',
+  });
+
+  // console.log(wss, 'wss');
+
+  return wss.on('connection', (ws, req) => {
     const id: string = req.headers['sec-websocket-key'] as string;
     clients[id] = ws;
     console.log('новое соединение ' + id);
@@ -94,3 +97,4 @@ export const webSoketConnection = () =>
       delete clients[id];
     });
   });
+};
