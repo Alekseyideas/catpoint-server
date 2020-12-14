@@ -1,11 +1,14 @@
 import WebSocket from 'ws';
 import { wsAddPoint, wsGetUserCompanies } from '../controllers/CompanyUser';
+// import { PORT } from './const';
 import { BadRequest } from './CpError';
 import { verifyToken } from './getTokenData';
 
 export const wss = new WebSocket.Server({
-  port: 8011,
+  port: 8080,
 });
+
+console.log(wss.options, 'wss');
 
 const clients: {
   [key: string]: WebSocket;

@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8" />
 <title>WebSocket Test</title>
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self' data: gap: ws: ssl.gstatic.com 'unsafe-inline';"
+/>
 <script language="javascript" type="text/javascript">
   const token =
     'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaXNDb21wYW55Ijp0cnVlLCJpYXQiOjE2MDc1MzE5MTQsImV4cCI6MTYwODEzNjcxNH0.L6SjVykXiWt-qvEMa9jBXJdBkJKvw5NVzgl-Px7uui4';
@@ -9,7 +13,7 @@
   const clientId = 'xKKrdVpEIqD+b28hQBcwow==';
   const userId = 1;
   const companyId = 1;
-  var wsUri = 'ws://localhost:8011';
+  var wsUri = 'ws://172.31.45.140:8080';
   var output;
 
   function init() {

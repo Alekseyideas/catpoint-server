@@ -5,7 +5,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import { PORT } from './utils/const';
+import { HOST, PORT } from './utils/const';
 import { connectToDb } from './utils/connection';
 import routes from './routes';
 import { CpError } from './utils/CpError';
@@ -52,11 +52,11 @@ import { webSoketConnection } from './utils/sokets';
     });
 
     app.get('/', (_req, res) => {
-      res.send(`<h1>🚀 Server ready at http://127.0.0.1:${PORT}</h1>`);
+      res.send(`<h1>🚀 Server ready at ${HOST}:${PORT}</h1>`);
     });
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server ready at http://127.0.0.1:${PORT}`);
+      console.log(`🚀 Server ready at ${HOST}:${PORT}`);
     });
   } catch (e) {
     console.log(e);
