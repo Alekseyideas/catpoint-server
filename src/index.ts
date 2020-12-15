@@ -23,6 +23,9 @@ import { webSoketConnection } from './utils/sokets';
   try {
     webSoketConnection(server);
     app.use(
+      (_req, _res, next) => {
+        next();
+      },
       cors({
         origin: '*',
         credentials: true,
