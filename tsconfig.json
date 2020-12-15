@@ -20,7 +20,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "baseUrl": "."
   },
   "exclude": ["node_modules"],
