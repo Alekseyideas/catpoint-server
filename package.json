@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "create-mig": "npx ts-node node_modules/.bin/typeorm migration:generate -n",
     "gen-mig": "npx ts-node node_modules/.bin/typeorm migration:run",
-    "build": "tsc -p ."
+    "build": "tsc --skipLibCheck -p ."
   },
   "keywords": [],
   "author": "",
