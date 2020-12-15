@@ -23,6 +23,9 @@ import { webSoketConnection } from './utils/sokets';
   try {
     webSoketConnection(server);
     app.use(
+      (_req, _res, next) => {
+        next();
+      },
       cors({
         origin: '*',
         credentials: true,
@@ -32,7 +35,9 @@ import { webSoketConnection } from './utils/sokets';
     await connectToDb();
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json({ type: 'application/json' }));
-    app.use(morgan('combined'));
+    app.use((_req, _res, next) => {
+      next();
+    }, morgan('combined'));
     app.use(cookieParser());
     await app.use('/api/v1', isAuth, routes);
 
